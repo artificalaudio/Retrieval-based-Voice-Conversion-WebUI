@@ -8,12 +8,12 @@ def export_onnx(ModelPath, ExportedPath):
     cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]
     vec_channels = 256 if cpt.get("version", "v1") == "v1" else 768
 
-    test_phone = torch.rand(1, 200, vec_channels)  # hidden unit
-    test_phone_lengths = torch.tensor([200]).long()  # hidden unit 长度（貌似没啥用）
-    test_pitch = torch.randint(size=(1, 200), low=5, high=255)  # 基频（单位赫兹）
-    test_pitchf = torch.rand(1, 200)  # nsf基频
+    test_phone = torch.rand(1, 100, vec_channels)  # hidden unit
+    test_phone_lengths = torch.tensor([100]).long()  # hidden unit 长度（貌似没啥用）
+    test_pitch = torch.randint(size=(1, 100), low=5, high=255)  # 基频（单位赫兹）
+    test_pitchf = torch.rand(1, 100)  # nsf基频
     test_ds = torch.LongTensor([0])  # 说话人ID
-    test_rnd = torch.rand(1, 192, 200)  # 噪声（加入随机因子）
+    test_rnd = torch.rand(1, 192, 100)  # 噪声（加入随机因子）
 
     device = "cpu"  # 导出时设备（不影响使用模型）
 
@@ -37,12 +37,12 @@ def export_onnx(ModelPath, ExportedPath):
             test_rnd.to(device),
         ),
         ExportedPath,
-        dynamic_axes={
-            "phone": [1],
-            "pitch": [1],
-            "pitchf": [1],
-            "rnd": [2],
-        },
+        # dynamic_axes={
+        #     "phone": [1],
+        #     "pitch": [1],
+        #     "pitchf": [1],
+        #     "rnd": [2],
+        # },
         do_constant_folding=False,
         opset_version=13,
         verbose=False,
